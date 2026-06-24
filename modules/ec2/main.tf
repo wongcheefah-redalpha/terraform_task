@@ -63,4 +63,12 @@ resource "aws_instance" "this" {
   tags = {
     Name = "${var.project_name}-ec2"
   }
+
+  lifecycle {
+    # The AMI comes from a most_recent data source whose result drifts as AWS
+    # publishes new Amazon Linux 2023 builds. Ignore post-creation AMI changes
+    # so the running instance is not replaced on every plan; new instances
+    # still launch from the latest AMI at creation time.
+    ignore_changes = [ami]
+  }
 }
